@@ -1,20 +1,36 @@
 import Koa from 'koa';
+// 中间件
 import bodyParser from 'koa-bodyparser';
 // import cors from 'koa-cors';
+import Static from 'koa-static'
+import modelLoader from './middleware/modelLoader';
+import serviceLoader from './middleware/serviceLoader';
 
+//工具类
+import utils from './utils';
+
+// 配置
 import config from './config';
-import router from './controller/index';
+import dbConf from './config/db.conf'
 
-const serve = require('koa-static');
+// 控制器服务模型
+import controller from './controller';
+import service from './service';
+import model from './model';
 
 const app = new Koa();
 
-app
-  .use(serve('./view'))
+app.use(Static('./view'))
   .use(bodyParser())
-  .use(router.routes())
-  .use(router.allowedMethods());
+  .use(serviceLoader(service))
+  .use(modelLoader(model, dbConf)) // db自定义中间件，将实例化的sequelize加到ctx对象上
+  .use(controller.routes())
+  .use(controller.allowedMethods());
 
 export default app.listen(config.port, () => {
-  console.log(`App is listening on ${config.port}.`);
+  const host = utils.getIPV4();
+  const port = config.port;
+  let local = `http://localhost:${port}`;  // 本地地址
+  let lanIp = `http://${host}:${port}`;   // 局域网ip地址
+  console.log(`Your application is running here:\nLocal: ${local}\nLanIp: ${lanIp}`);
 });

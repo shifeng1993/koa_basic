@@ -3,7 +3,7 @@ import {SwaggerRouter} from 'koa-swagger-decorator';
 const koaRouterOpts = {prefix: '/api/v2'};
 const swaggerRouterOpts = {
   title: 'API V2 Server',
-  description: 'API DOC',
+  description: `新增api:\n\r1.xxx \n\r2.xxx`,
   version: '1.0.0'
 };
 const router = new SwaggerRouter(koaRouterOpts, swaggerRouterOpts);
